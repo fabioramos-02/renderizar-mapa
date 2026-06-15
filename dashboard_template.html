@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Source do Mapa — Unidades PMMS a corrigir</title>
+<style>
+:root{--bg:#0f1720;--card:#16212e;--line:#243042;--txt:#e6edf3;--mut:#8aa0b4;--ac:#3b82f6;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444}
+*{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px}
+h1{font-size:22px;margin:0 0 4px}
+.lead{color:var(--mut);margin:0 0 20px}
+.cards{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px;min-width:110px}
+.kpi .v{font-size:26px;font-weight:700}
+.kpi .l{color:var(--mut);font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.kpi.bad .v{color:var(--bad)}.kpi.ok .v{color:var(--ok)}.kpi.prog .v{color:var(--ac)}
+.bar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+input[type=search],select{background:var(--card);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:9px 12px;font-size:14px}
+input[type=search]{flex:1;min-width:220px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);background:#111a24;position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+.n{color:var(--mut);width:30px}.chk{width:30px}
+.sub{color:var(--mut);font-size:12px}
+.badge{font-size:12px;padding:3px 8px;border-radius:20px;white-space:nowrap}
+.badge.aspa{background:rgba(245,158,11,.15);color:var(--warn)}
+.badge.place{background:rgba(239,68,68,.15);color:var(--bad)}
+.warn{color:var(--warn);font-size:11px}
+a.edit{color:#fff;background:var(--ac);text-decoration:none;padding:6px 12px;border-radius:7px;font-weight:600;white-space:nowrap}
+a.edit:hover{filter:brightness(1.1)}
+button.copy{background:transparent;border:1px solid var(--line);color:var(--txt);padding:6px 10px;border-radius:7px;cursor:pointer;white-space:nowrap}
+button.copy:hover{border-color:var(--ac)}
+button.copy.done{border-color:var(--ok);color:var(--ok)}
+tr.checked{opacity:.45}tr.checked b{text-decoration:line-through}
+.foot{color:var(--mut);font-size:12px;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Source do Mapa — Unidades PMMS a corrigir</h1>
+<p class="lead">Servico 424 · Boletim on-line de acidente de transito. Clique <b>Editar</b> &rarr; no campo <i>Source do Mapa</i> remova a aspa <b>"</b> inicial &rarr; salve.</p>
+<div class="cards">
+<div class="kpi"><div class="v">68</div><div class="l">Total</div></div>
+<div class="kpi bad"><div class="v">{{BAD}}</div><div class="l">A corrigir</div></div>
+<div class="kpi ok"><div class="v">2</div><div class="l">OK</div></div>
+<div class="kpi"><div class="v">{{NASPA}}</div><div class="l">Aspa inicial</div></div>
+<div class="kpi"><div class="v">{{NESP}}</div><div class="l">Embed novo</div></div>
+<div class="kpi prog"><div class="v" id="done">0</div><div class="l">Concluidas</div></div>
+</div>
+<div class="bar">
+<input type="search" id="q" placeholder="Buscar por nome, slug, endereco, bairro...">
+<select id="f">
+<option value="">Todos os motivos</option>
+<option value="aspa-inicial">Aspa inicial</option>
+<option value="maps/place">/maps/place</option>
+<option value="sem-url">Texto / sem URL</option>
+</select>
+<button class="copy" id="reset">Limpar progresso</button>
+</div>
+<table>
+<thead><tr><th></th><th>#</th><th>Unidade</th><th>Endereco</th><th>Motivo</th><th>Admin</th><th>Source corrigido</th></tr></thead>
+<tbody id="tb">{{ROWS}}</tbody>
+</table>
+<p class="foot">Progresso salvo neste navegador (localStorage). "Copiar source" copia a versao ja corrigida (sem a aspa) — util pros 2 casos de embed novo. ! = endereco do embed novo precisa conferencia.</p>
+</div>
+<script>
+const KEY='pmms424done';
+let done=JSON.parse(localStorage.getItem(KEY)||'{}');
+function refresh(){
+  let c=0;
+  document.querySelectorAll('tbody tr').forEach(tr=>{
+    const cb=tr.querySelector('input');const s=cb.dataset.slug;
+    if(done[s]){cb.checked=true;tr.classList.add('checked');c++;}else{cb.checked=false;tr.classList.remove('checked');}
+  });
+  document.getElementById('done').textContent=c;
+}
+document.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',e=>{
+  const s=e.target.dataset.slug;if(e.target.checked)done[s]=1;else delete done[s];
+  localStorage.setItem(KEY,JSON.stringify(done));refresh();
+}));
+document.querySelectorAll('button.copy[data-src]').forEach(b=>b.addEventListener('click',()=>{
+  navigator.clipboard.writeText(b.dataset.src);
+  const t=b.textContent;b.textContent='Copiado!';b.classList.add('done');
+  setTimeout(()=>{b.textContent=t;b.classList.remove('done');},1200);
+}));
+const q=document.getElementById('q'),f=document.getElementById('f');
+function filt(){
+  const s=q.value.toLowerCase().trim(),m=f.value;
+  document.querySelectorAll('tbody tr').forEach(tr=>{
+    const okS=!s||tr.dataset.search.includes(s);
+    const okM=!m||tr.dataset.motivo===m;
+    tr.style.display=(okS&&okM)?'':'none';
+  });
+}
+q.addEventListener('input',filt);f.addEventListener('change',filt);
+document.getElementById('reset').addEventListener('click',()=>{if(confirm('Limpar progresso?')){done={};localStorage.removeItem(KEY);refresh();}});
+refresh();
+</script>
+</body>
+</html>
