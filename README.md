@@ -38,6 +38,9 @@ Nas cartas de serviço, a seção **"Unidades disponíveis"** mostra um mapa do 
 ## Uso rápido
 
 ```bash
+# 0. configurar credenciais (.env é ignorado pelo git)
+cp .env.example .env   # e preencher CMS_API_KEY
+
 # 1. levanta as unidades incorretas -> data/
 python scripts/gerar_relatorio.py
 

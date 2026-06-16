@@ -33,19 +33,36 @@ try:
 except ImportError:
     sys.exit("Instale 'requests': pip install requests")
 
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(ROOT, "data")
+
+
+def _load_dotenv():
+    """Carrega .env da raiz do projeto (sem dependência externa)."""
+    path = os.path.join(ROOT, ".env")
+    if not os.path.exists(path):
+        return
+    for raw in open(path, encoding="utf-8"):
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_load_dotenv()
+
 API_BASE = os.environ.get("CMS_API_BASE", "https://admin.ms.gov.br/api/cms").rstrip("/")
 # A Api-Key do CMS é pública (vai no bundle da SPA) e read-only, mas NÃO fica
-# versionada. Defina via env: CMS_API_KEY. Como obter: DevTools -> Network ->
+# versionada. Defina no .env: CMS_API_KEY. Como obter: DevTools -> Network ->
 # qualquer request /api/cms/ -> header "Authorization: Api-Key <valor>".
 API_KEY = os.environ.get("CMS_API_KEY", "")
 ADMIN_EDIT = "https://admin.ms.gov.br/locais_atendimento/editar/"
 
 if not API_KEY:
-    sys.exit("Defina a variável de ambiente CMS_API_KEY (ver CLAUDE.md).")
+    sys.exit("Defina CMS_API_KEY no .env (copie de .env.example). Ver CLAUDE.md.")
 
 HEADERS = {"Authorization": f"Api-Key {API_KEY}", "Accept": "application/json"}
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DATA_DIR = os.path.join(ROOT, "data")
 
 SESSION = requests.Session()
 SESSION.headers.update(HEADERS)
