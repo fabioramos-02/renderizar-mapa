@@ -30,8 +30,10 @@ def main():
         n_serv, n_uni = m.get("n_servicos", "—"), m.get("n_unidades", "—")
 
     gen_at = datetime.datetime.now().strftime("%d/%m/%Y %H:%M")
+    # Embed seguro em <script>: neutraliza "</script>" e "<iframe" no JSON.
+    data_json = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
     html = (tpl
-            .replace("{{DATA_JSON}}", json.dumps(data, ensure_ascii=False))
+            .replace("{{DATA_JSON}}", data_json)
             .replace("{{GENERATED_AT}}", gen_at)
             .replace("{{N_SERVICOS}}", str(n_serv))
             .replace("{{N_UNIDADES}}", str(n_uni)))

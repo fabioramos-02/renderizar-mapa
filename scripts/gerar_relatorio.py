@@ -34,8 +34,14 @@ except ImportError:
     sys.exit("Instale 'requests': pip install requests")
 
 API_BASE = os.environ.get("CMS_API_BASE", "https://admin.ms.gov.br/api/cms").rstrip("/")
-API_KEY = os.environ.get("CMS_API_KEY", "8tqFBwkS.6eLeClPnZvZEioz7ghV4GuNvvPPf4GMG")
+# A Api-Key do CMS é pública (vai no bundle da SPA) e read-only, mas NÃO fica
+# versionada. Defina via env: CMS_API_KEY. Como obter: DevTools -> Network ->
+# qualquer request /api/cms/ -> header "Authorization: Api-Key <valor>".
+API_KEY = os.environ.get("CMS_API_KEY", "")
 ADMIN_EDIT = "https://admin.ms.gov.br/locais_atendimento/editar/"
+
+if not API_KEY:
+    sys.exit("Defina a variável de ambiente CMS_API_KEY (ver CLAUDE.md).")
 
 HEADERS = {"Authorization": f"Api-Key {API_KEY}", "Accept": "application/json"}
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
