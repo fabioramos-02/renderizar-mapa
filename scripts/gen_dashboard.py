@@ -16,7 +16,8 @@ import datetime
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "data", "unidades_incorretas.json")
 TPL = os.path.join(ROOT, "dashboard", "template.html")
-OUT = os.path.join(ROOT, "dashboard", "index.html")
+# index.html na RAIZ: Vercel serve a raiz por padrão (sem config).
+OUT = os.path.join(ROOT, "index.html")
 META = os.path.join(ROOT, "data", "_meta.json")
 
 

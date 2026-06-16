@@ -44,12 +44,14 @@ cp .env.example .env   # e preencher CMS_API_KEY
 # 1. levanta as unidades incorretas -> data/
 python scripts/gerar_relatorio.py
 
-# 2. gera o dashboard -> dashboard/index.html
+# 2. gera o dashboard -> index.html (raiz)
 python scripts/gen_dashboard.py
 
 # 3. abre o dashboard (duplo-clique ou):
-#    Windows:  start dashboard/index.html
+#    Windows:  start index.html
 ```
+
+> Publicado na Vercel: a raiz serve o `index.html` gerado (sem build). Push no `main` = redeploy.
 
 Requisito: Python 3 + `requests` (`pip install requests`).
 
@@ -59,18 +61,19 @@ Requisito: Python 3 + `requests` (`pip install requests`).
 
 ```
 renderizar-mapa/
+├── index.html               # dashboard gerado (servido na raiz pela Vercel)
 ├── scripts/
 │   ├── gerar_relatorio.py   # API CMS -> data/ (unidades ativas incorretas)
-│   └── gen_dashboard.py     # data/json -> dashboard/index.html
+│   └── gen_dashboard.py     # data/json -> index.html
 ├── data/
 │   ├── unidades_incorretas.json
 │   └── unidades_incorretas.csv
 ├── dashboard/
-│   ├── template.html        # tema + UI (filtro por órgão, checklist)
-│   └── index.html           # gerado
+│   └── template.html        # tema DS-MS + UI (filtro por órgão, checklist)
 ├── sql/
 │   ├── deteccao.sql         # levantamento direto no banco
 │   └── correcao.sql         # UPDATE (strip aspa) com backup + transação
+├── vercel.json
 ├── README.md
 └── CLAUDE.md                # contexto p/ continuar via banco (VPN)
 ```

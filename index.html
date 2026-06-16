@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Source do Mapa incorreto · SETDIG · ms.gov.br</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== DS-MS tokens (fonte de verdade: colors_and_type.css + components.css) ===== */
+:root{
+  --primary-100:#CCDCEC; --primary-500:#004F9F; --primary-600:#002F5F; --primary-700:#002040;
+  --bg:#FFFFFF; --bg-muted:#F9F9F9; --bg-subtle:#EAEBEC;
+  --content-1:#212A31; --content-2:#6E757A; --content-3:#A9AEB1;
+  --border:#A9AEB1; --border-soft:#EAEBEC; --border-strong:#545D64;
+  --error:#DA1E28; --success:#198038; --warning:#FF6200; --info:#067BCC; --link:#0D99F7;
+  --ff-head:"Open Sans",system-ui,sans-serif;
+  --ff-body:"Roboto",system-ui,sans-serif;
+  --ff-mono:"Archivo","Roboto Mono",monospace;
+  --sh-4:0px 4px 8px 0px rgba(0,32,64,.30);
+  --sh-6:0px 6px 12px 0px rgba(0,32,64,.30);
+  --r-input:2px; --r-btn:4px; --r-card:8px;
+}
+*{box-sizing:border-box}
+html,body{margin:0; background:var(--bg-muted); color:var(--content-1); font-family:var(--ff-body); font-size:16px; line-height:1.5}
+h1,h2,h3{font-family:var(--ff-head); font-weight:700; margin:0}
+a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link); outline-offset:2px}
+
+/* header strip governamental */
+.ds-strip{background:var(--primary-500); color:#fff; min-height:96px; display:flex; align-items:center}
+.ds-strip .in{max-width:1200px; margin:0 auto; padding:18px 24px; width:100%; display:flex; align-items:center; gap:16px}
+.ds-strip .mark{font-family:var(--ff-mono); font-weight:700; font-size:12px; letter-spacing:.08em; background:#ffffff1f; padding:6px 10px; border-radius:var(--r-btn)}
+.ds-strip h1{font-size:22px; line-height:1.2}
+.ds-strip .sub{font-family:var(--ff-body); font-weight:400; font-size:13px; opacity:.9; margin-top:2px}
+
+.wrap{max-width:1200px; margin:0 auto; padding:28px 24px 80px}
+
+/* breadcrumb-ish meta */
+.meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--ff-mono); font-size:12px; color:var(--content-2); margin-bottom:22px}
+.meta b{color:var(--content-1); font-weight:600}
+
+/* KPIs */
+.kpis{display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:28px}
+.kpi{background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card);
+  box-shadow:var(--sh-4); padding:16px; position:relative; overflow:hidden}
+.kpi::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--content-3)}
+.kpi.k-primary::before{background:var(--primary-500)} .kpi.k-error::before{background:var(--error)}
+.kpi.k-success::before{background:var(--success)} .kpi.k-warning::before{background:var(--warning)}
+.kpi.k-info::before{background:var(--info)}
+.kpi .v{font-family:var(--ff-head); font-weight:700; font-size:32px; line-height:1; color:var(--content-1)}
+.kpi .l{font-size:13px; color:var(--content-2); margin-top:8px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:540px){.kpis{grid-template-columns:repeat(2,1fr)}}
+
+/* controls */
+.bar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px}
+.field{display:flex; flex-direction:column; gap:4px}
+.field label{font-family:var(--ff-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--content-2)}
+.field select,.field input{height:48px; border:1px solid var(--border); border-radius:var(--r-input);
+  background:var(--bg); color:var(--content-1); font-family:var(--ff-body); font-size:14px; padding:0 12px; min-width:150px}
+.field.search{flex:1; min-width:240px}
+.field.search input{width:100%}
+.field select:focus,.field input:focus{border-color:var(--primary-500); box-shadow:0 0 0 2px rgba(0,79,159,.15); outline:none}
+.toggles{display:flex; gap:16px; align-items:center; padding-top:18px}
+.toggle{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--content-1); cursor:pointer; user-select:none}
+.toggle input{width:20px; height:20px; accent-color:var(--primary-500)}
+.btn-sec{height:48px; align-self:flex-end; margin-top:auto; padding:0 16px; border:1px solid var(--border);
+  background:var(--bg); color:var(--content-1); border-radius:var(--r-btn); font-family:var(--ff-body); font-weight:600; font-size:14px; cursor:pointer}
+.btn-sec:hover{border-color:var(--primary-500); color:var(--primary-500)}
+
+/* groups + table */
+.group{margin-top:24px; background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card); overflow:hidden; box-shadow:var(--sh-4)}
+.ghead{display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--bg-muted); border-bottom:1px solid var(--border-soft)}
+.ghead .org{font-family:var(--ff-head); font-weight:700; font-size:18px; color:var(--content-1)}
+.ghead .cnt{font-family:var(--ff-body); font-weight:700; font-size:12px; color:var(--primary-600); background:var(--primary-100); padding:3px 10px; border-radius:var(--r-btn)}
+.ghead .prog{margin-left:auto; font-family:var(--ff-mono); font-size:12px; color:var(--content-2)}
+.thead,.row{display:grid; grid-template-columns:30px 1.2fr 1.3fr 130px 120px 116px; gap:12px; align-items:center}
+.thead{padding:10px 18px; background:var(--primary-500); color:#fff; font-family:var(--ff-body); font-weight:600; font-size:12px; letter-spacing:.02em}
+.row{padding:12px 18px; border-bottom:1px solid var(--border-soft)}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--bg-muted)}
+.row.done{background:#f4faf6}
+.row.done .nm b{text-decoration:line-through; color:var(--content-2)}
+.chk{display:flex; justify-content:center}
+.chk input{width:20px; height:20px; accent-color:var(--success); cursor:pointer}
+.nm b{font-weight:600; color:var(--content-1)}
+.nm .slug{display:block; font-family:var(--ff-mono); font-size:12px; color:var(--content-3); margin-top:2px}
+.addr{font-size:14px; color:var(--content-2)}
+.addr .bairro{color:var(--content-3); font-size:13px}
+/* DS tags */
+.tag{display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:var(--r-btn);
+  font-family:var(--ff-body); font-weight:700; font-size:12px; white-space:nowrap}
+.t-aspa{background:#FFE0CC; color:#331A09}
+.t-iframe{background:#CDEBFF; color:#011F33}
+.t-nao-embed{background:#F6D3D5; color:#540F12}
+.t-sem-source{background:#F6D3D5; color:#540F12}
+.a-edit{display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 14px; background:var(--primary-500);
+  color:#fff; text-decoration:none; font-weight:700; font-size:13px; border-radius:var(--r-btn); border:2px solid var(--primary-500)}
+.a-edit:hover{background:var(--primary-600); border-color:var(--primary-600)}
+.a-edit:active{background:var(--primary-700)}
+.cp{height:40px; padding:0 12px; background:var(--bg); border:1px solid var(--border); color:var(--content-1);
+  border-radius:var(--r-btn); font-family:var(--ff-body); font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap}
+.cp:hover{border-color:var(--primary-500); color:var(--primary-500)}
+.cp.done{border-color:var(--success); color:var(--success)}
+.flag{font-family:var(--ff-mono); font-size:12px; color:var(--error)}
+.empty{padding:48px 20px; text-align:center; color:var(--content-2); font-family:var(--ff-mono); background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card)}
+.foot{margin-top:32px; padding-top:16px; border-top:1px solid var(--border-soft); color:var(--content-2); font-size:13px; line-height:1.9}
+code{font-family:var(--ff-mono); background:var(--bg-subtle); padding:1px 5px; border-radius:var(--r-input); font-size:.9em}
+@media(max-width:820px){
+  .thead{display:none}
+  .row{grid-template-columns:24px 1fr 108px; row-gap:10px}
+  .addr,.acts-edit,.acts-cp{grid-column:2 / -1}
+  .acts-edit,.acts-cp{display:inline-block}
+}
+</style>
+</head>
+<body>
+
+<header class="ds-strip">
+  <div class="in">
+    <span class="mark">SETDIG</span>
+    <div>
+      <h1>Source do Mapa incorreto</h1>
+      <div class="sub">Secretaria-Executiva de Transformação Digital · Portal ms.gov.br</div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="meta">
+    <span>fonte · <b>API CMS (somente leitura)</b></span>
+    <span>gerado · <b>15/06/2026 22:10</b></span>
+    <span>varredura · <b>1219 serviços / 623 unidades</b></span>
+  </div>
+
+  <section class="kpis" id="kpis"></section>
+
+  <div class="bar">
+    <div class="field"><label for="f-org">Órgão</label><select id="f-org"></select></div>
+    <div class="field"><label for="f-mot">Motivo</label>
+      <select id="f-mot">
+        <option value="">Todos</option>
+        <option value="aspa-inicial">Aspa inicial</option>
+        <option value="tag-iframe">Tag &lt;iframe&gt;</option>
+        <option value="nao-embed">Não-embed</option>
+        <option value="sem-source">Sem source</option>
+      </select>
+    </div>
+    <div class="field search"><label for="f-q">Busca</label><input id="f-q" type="search" placeholder="nome, slug, endereço, bairro…"></div>
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="t-group" checked> Agrupar por órgão</label>
+      <label class="toggle"><input type="checkbox" id="t-hide"> Ocultar concluídas</label>
+    </div>
+    <button class="btn-sec" id="reset" type="button">Limpar progresso</button>
+  </div>
+
+  <main id="list"></main>
+
+  <footer class="foot">
+    <div>Critério: <b>aspa inicial</b> (o campo vira <code>"http…</code> → 404) · <b>tag &lt;iframe&gt;</b> colada no campo · <b>não-embed</b> (place/dir/short → bloqueado em iframe). Embed válido começa em <code>https://www.google.com/maps/embed?pb=…</code></div>
+    <div>Correção mínima: remover a aspa inicial / extrair só a URL. Casos <span class="flag">embed novo</span> precisam de um embed gerado no Google Maps. Progresso salvo localmente neste navegador.</div>
+  </footer>
+
+</div>
+
+<script id="ds-data" type="application/json">[{"slug": "agencia-integrada-comper-itanhanga111", "nome": "Térreo", "endereco": "R. Joaquim Murtinho, 1679 - Itanhangá Park", "bairro": "Itanhangá Park", "orgao": "DETRAN", "ativo": true, "motivo": "nao-embed", "source_atual": "https://maps.app.goo.gl/4DBJWxGC8T4Zhsrk8", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/agencia-integrada-comper-itanhanga111"}, {"slug": "gerencia-de-administracao191", "nome": "Gerência de Administração", "endereco": "Rua: Sete de Setembro, 1606", "bairro": "Centro", "orgao": "FUNDECT", "ativo": true, "motivo": "sem-source", "source_atual": "x", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/gerencia-de-administracao191"}, {"slug": "escritorio-local-de-aquidauana131", "nome": "Escritório Local de Aquidauana", "endereco": "Rua Nilza Ferraz Ribeiro esquina com Honório Simões Pires, s/nº", "bairro": "Bairro Alto", "orgao": "IMASUL", "ativo": true, "motivo": "sem-source", "source_atual": "=https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1108.5528531119405!2d-55.78182892792595!3d-20.458142311937895!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x947de73f54ee1815%3A0x1a064e0d09cec336!2sImasul%20(Instituto%20de%20Meio%20Ambiente%20de%20Mato%20Grosso%20do%20Sul)%20Aquidauana!5e1!3m2!1spt-BR!2sbr!4v1776370066125!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/escritorio-local-de-aquidauana131"}, {"slug": "pmms126", "nome": "Grupamento de Polícia Militar", "endereco": "Rua Floriano Peixoto, 999", "bairro": "Centro", "orgao": "PMMS", "ativo": true, "motivo": "tag-iframe", "source_atual": "\u003ciframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29706.85459911366!2d-56.125947699857086!3d-21.45451139717481!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x947d23d3def50af1%3A0xcabd87d3c65b796b!2sGuia%20Lopes%20da%20Laguna%2C%20MS%2C%2079230-000!5e0!3m2!1spt-BR!2sbr!4v1781575379444!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\">\u003c/iframe>", "source_corrigido": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29706.85459911366!2d-56.125947699857086!3d-21.45451139717481!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x947d23d3def50af1%3A0xcabd87d3c65b796b!2sGuia%20Lopes%20da%20Laguna%2C%20MS%2C%2079230-000!5e0!3m2!1spt-BR!2sbr!4v1781575379444!5m2!1spt-BR!2sbr", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/pmms126"}, {"slug": "procon-mato-grosso-do-sul128", "nome": "1º Andar", "endereco": "Rua Padre João Crippa, 3115", "bairro": "São Francisco", "orgao": "SEAD", "ativo": true, "motivo": "nao-embed", "source_atual": "https://www.google.com/maps/place/R.+Padre+Jo%C3%A3o+Crippa,+3115+-+Jardim+Monte+Libano,+Campo+Grande+-+MS,+79010-180/@-20.4456833,-54.6139079,17z/data=!3m1!4b1!4m6!3m5!1s0x9486e62b6bfbd15b:0xde4af384683268cd!8m2!3d-20.4456833!4d-54.6139079!16s%2Fg%2F11qb2fd6sp?entry=ttu", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/procon-mato-grosso-do-sul128"}, {"slug": "coordenadoria-de-atendimento-aos-orgaos-colegiados83", "nome": "3º Andar", "endereco": "Rua Padre João Crippa, 3115", "bairro": "São Francisco", "orgao": "SEAD", "ativo": true, "motivo": "nao-embed", "source_atual": "https://share.google/xs6z39phUVjF6OahA", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/coordenadoria-de-atendimento-aos-orgaos-colegiados83"}, {"slug": "coordenadoria-da-escola-de-assistencia-social10", "nome": "Coordenadoria da Escola de Assistência Social", "endereco": "Rua André Pace, 630", "bairro": "Guanandi", "orgao": "SEAD", "ativo": true, "motivo": "nao-embed", "source_atual": "https://maps.app.goo.gl/LMpEHm8VrQThe8EZ9", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/coordenadoria-da-escola-de-assistencia-social10"}, {"slug": "sead27", "nome": "Superintendência de Programas Estruturantes", "endereco": "Rua 14 de Julho, 1269", "bairro": "Centro", "orgao": "SEAD", "ativo": true, "motivo": "nao-embed", "source_atual": "https://www.google.com/maps/dir//PROGRAMA+VALE+UNIVERSIDADE+-+Rua+14+de+Julho,+1269+-+Centro,+Campo+Grande+-+MS,+79002-335/@-20.4694821,-54.616173,15z/data=!4m9!4m8!1m0!1m5!1m1!1s0x9486e61943b1e9d5:0x9a1ea17379c67116!2m2!1d-54.616173!2d-20.4694821!3e0?entry=ttu&g_ep=EgoyMDI0MDkxNi4wIKXMDSoASAFQAw%3D%3D", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/sead27"}, {"slug": "sead193", "nome": "Superintendência do Programa Mais Social", "endereco": "Rua Barão de Ladário, 85", "bairro": "Vila Sobrinho", "orgao": "SEAD", "ativo": true, "motivo": "nao-embed", "source_atual": "https://share.google/rKbjPcIhTVZhYTGR2", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/sead193"}, {"slug": "secretaria-de-estado-da-cidadania21", "nome": "Secretaria de Estado da Cidadania", "endereco": "Av. Ceará, 984", "bairro": "Vila Antonio Vendas", "orgao": "SEC", "ativo": true, "motivo": "aspa-inicial", "source_atual": "\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3738.174449816506!2d-54.5921835!3d-20.458026899999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e895c381b403%3A0x6fa75d8cb9af2306!2sAv.%20Cear%C3%A1%2C%20984%20-%20Vila%20Antonio%20Vendas%2C%20Campo%20Grande%20-%20MS%2C%2079003-010!5e0!3m2!1spt-BR!2sbr!4v1725973746408!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"", "source_corrigido": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3738.174449816506!2d-54.5921835!3d-20.458026899999997!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e895c381b403%3A0x6fa75d8cb9af2306!2sAv.%20Cear%C3%A1%2C%20984%20-%20Vila%20Antonio%20Vendas%2C%20Campo%20Grande%20-%20MS%2C%2079003-010!5e0!3m2!1spt-BR!2sbr!4v1725973746408!5m2!1spt-BR!2sbr", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/secretaria-de-estado-da-cidadania21"}, {"slug": "superintendencia-de-planejamento-e-articulacao-interinstitucional1", "nome": "984", "endereco": "Av. Ceará", "bairro": "Antonio Vendas", "orgao": "SEC", "ativo": true, "motivo": "nao-embed", "source_atual": "https://www.google.com/maps/place/Secretaria+de+Estado+da+Cidadania+de+Mato+Grosso+do+Sul/@-20.4578186,-54.5923982,17z/data=!3m1!4b1!4m6!3m5!1s0x9486e929b0ca3d71:0x8fc4ac8540e5dc6!8m2!3d-20.4578186!4d-54.5923982!16s%2Fg%2F11lnp4t8hz?entry=tts&g_ep=EgoyMDI1MDIwNS4xIPu8ASoASAFQAw%3D%3D", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/superintendencia-de-planejamento-e-articulacao-interinstitucional1"}, {"slug": "secretaria-de-governo-digital195", "nome": "SETDIG - Secretaria-Executiva de Transformação Digital", "endereco": "Rua Delegado Osmar de Camargo, S/N", "bairro": "Jardim Veraneio", "orgao": "SEGOV MS", "ativo": true, "motivo": "nao-embed", "source_atual": "https://maps.app.goo.gl/a3uscWFPcdG81ouWA", "source_corrigido": "__GERAR_EMBED__", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/secretaria-de-governo-digital195"}, {"slug": "semadesc73", "nome": "Bloco 12", "endereco": "Avenida Desembargador José Nunes da Cunha", "bairro": "Parque dos Poderes", "orgao": "SEMADESC", "ativo": true, "motivo": "aspa-inicial", "source_atual": "\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749059224769!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"", "source_corrigido": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749059224769!5m2!1spt-BR!2sbr", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/semadesc73"}, {"slug": "semadesc80", "nome": "Bloco 12", "endereco": "Avenida Desembargador José Nunes da Cunha", "bairro": "Parque dos Poderes", "orgao": "SEMADESC", "ativo": true, "motivo": "aspa-inicial", "source_atual": "\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749042591638!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"", "source_corrigido": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749042591638!5m2!1spt-BR!2sbr", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/semadesc80"}, {"slug": "semadesc143", "nome": "Bloco 12", "endereco": "Avenida Desembargador José Nunes da Cunha", "bairro": "Parque dos Poderes", "orgao": "SEMADESC", "ativo": true, "motivo": "aspa-inicial", "source_atual": "\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749059325137!5m2!1spt-BR!2sbr\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"no-referrer-when-downgrade\"", "source_corrigido": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4473.575922051855!2d-54.558187323970174!3d-20.443537254506897!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9486e91a7b5680cd%3A0xaf93a898b08a242e!2sSEMADESC-Secretaria%20de%20Meio%20Ambiente%2C%20Desenvolvimento%2C%20Ci%C3%AAncia%2C%20Tecnologia%20e%20Inova%C3%A7%C3%A3o!5e1!3m2!1spt-BR!2sbr!4v1749059325137!5m2!1spt-BR!2sbr", "edit_url": "https://admin.ms.gov.br/locais_atendimento/editar/semadesc143"}]</script>
+<script>
+const DATA = JSON.parse(document.getElementById('ds-data').textContent);
+const KEY = 'mapa_quebrado_done';
+let done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { done = {}; }
+
+const tagClass = m => ({'aspa-inicial':'t-aspa','tag-iframe':'t-iframe','nao-embed':'t-nao-embed','sem-source':'t-sem-source'}[m] || 't-aspa');
+const tagLabel = m => ({'aspa-inicial':'aspa inicial','tag-iframe':'<iframe>','nao-embed':'não-embed','sem-source':'sem source'}[m] || m);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+(function fillOrgaos(){
+  const counts = {};
+  DATA.forEach(r => counts[r.orgao] = (counts[r.orgao] || 0) + 1);
+  document.getElementById('f-org').innerHTML =
+    '<option value="">Todos os órgãos (' + DATA.length + ')</option>' +
+    Object.entries(counts).sort((a,b)=>b[1]-a[1])
+      .map(([o,n]) => `<option value="${esc(o)}">${esc(o)} (${n})</option>`).join('');
+})();
+
+const els = {
+  org:document.getElementById('f-org'), mot:document.getElementById('f-mot'),
+  q:document.getElementById('f-q'), group:document.getElementById('t-group'),
+  hide:document.getElementById('t-hide'), list:document.getElementById('list'),
+  kpis:document.getElementById('kpis'), reset:document.getElementById('reset'),
+};
+
+function filtered(){
+  const o = els.org.value, m = els.mot.value, q = els.q.value.trim().toLowerCase();
+  return DATA.filter(r => {
+    if (o && r.orgao !== o) return false;
+    if (m && r.motivo !== m) return false;
+    if (els.hide.checked && done[r.slug]) return false;
+    if (q){ const hay = (r.slug+' '+r.nome+' '+r.endereco+' '+r.bairro+' '+r.orgao).toLowerCase(); if (!hay.includes(q)) return false; }
+    return true;
+  });
+}
+
+function rowHTML(r){
+  const d = done[r.slug] ? ' done' : '';
+  const gen = r.source_corrigido === '__GERAR_EMBED__';
+  const act = gen ? '<span class="flag">embed novo</span>'
+                  : `<button class="cp" data-src="${esc(r.source_corrigido)}">Copiar fix</button>`;
+  return `<div class="row${d}" data-slug="${esc(r.slug)}">
+    <div class="chk"><input type="checkbox" ${done[r.slug] ? 'checked' : ''} data-slug="${esc(r.slug)}" aria-label="marcar concluída"></div>
+    <div class="nm"><b>${esc(r.nome)}</b><span class="slug">${esc(r.slug)}</span></div>
+    <div class="addr">${esc(r.endereco)}<span class="bairro"> · ${esc(r.bairro)}</span></div>
+    <div><span class="tag ${tagClass(r.motivo)}">${esc(tagLabel(r.motivo))}</span></div>
+    <div class="acts-edit"><a class="a-edit" href="${esc(r.edit_url)}" target="_blank" rel="noopener">Editar ↗</a></div>
+    <div class="acts-cp">${act}</div>
+  </div>`;
+}
+
+const THEAD = `<div class="thead"><div></div><div>Unidade</div><div>Endereço</div><div>Motivo</div><div>Admin</div><div>Fix</div></div>`;
+
+function render(){
+  const rows = filtered();
+  const total = DATA.length;
+  const doneCount = DATA.filter(r => done[r.slug]).length;
+  const orgs = new Set(DATA.map(r => r.orgao)).size;
+  const aspa = DATA.filter(r => r.motivo === 'aspa-inicial').length;
+  const novo = DATA.filter(r => r.source_corrigido === '__GERAR_EMBED__').length;
+  els.kpis.innerHTML = [
+    ['k-primary', total, 'Incorretas'],
+    ['k-error', total - doneCount, 'Pendentes'],
+    ['k-success', doneCount, 'Concluídas'],
+    ['k-warning', aspa, 'Aspa inicial'],
+    ['k-info', novo, 'Embed novo'],
+    ['', orgs, 'Órgãos'],
+  ].map(([c,v,l]) => `<div class="kpi ${c}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+
+  if (!rows.length){ els.list.innerHTML = '<div class="empty">Nenhuma unidade com os filtros atuais.</div>'; return; }
+
+  if (els.group.checked){
+    const groups = {};
+    rows.forEach(r => (groups[r.orgao] = groups[r.orgao] || []).push(r));
+    els.list.innerHTML = Object.entries(groups).sort((a,b)=>b[1].length-a[1].length).map(([org,rs])=>{
+      const dn = rs.filter(r => done[r.slug]).length;
+      return `<section class="group"><div class="ghead">
+        <span class="org">${esc(org)}</span><span class="cnt">${rs.length}</span>
+        <span class="prog">${dn}/${rs.length} concluídas</span></div>
+        ${THEAD}${rs.map(rowHTML).join('')}</section>`;
+    }).join('');
+  } else {
+    els.list.innerHTML = `<section class="group">${THEAD}${rows.map(rowHTML).join('')}</section>`;
+  }
+  bind();
+}
+
+function bind(){
+  els.list.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', e => {
+    const s = e.target.dataset.slug;
+    if (e.target.checked) done[s] = 1; else delete done[s];
+    localStorage.setItem(KEY, JSON.stringify(done)); render();
+  }));
+  els.list.querySelectorAll('.cp[data-src]').forEach(b => b.addEventListener('click', () => {
+    navigator.clipboard.writeText(b.dataset.src);
+    const t = b.textContent; b.textContent = 'Copiado!'; b.classList.add('done');
+    setTimeout(() => { b.textContent = t; b.classList.remove('done'); }, 1100);
+  }));
+}
+
+[els.org, els.mot, els.group, els.hide].forEach(el => el.addEventListener('change', render));
+els.q.addEventListener('input', render);
+els.reset.addEventListener('click', () => { if (confirm('Limpar todo o progresso?')){ done = {}; localStorage.removeItem(KEY); render(); }});
+render();
+</script>
+</body>
+</html>
