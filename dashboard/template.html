@@ -3,135 +3,144 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mapa Quebrado · Source do Mapa incorreto · ms.gov.br</title>
+<title>Source do Mapa incorreto · SETDIG · ms.gov.br</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;600;700&family=Archivo:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* ===== DS-MS tokens (fonte de verdade: colors_and_type.css + components.css) ===== */
 :root{
-  --bg:#0b0e14; --bg2:#0f141d; --panel:#131a26; --panel2:#172131;
-  --line:#23304353; --line2:#2c3a4f; --txt:#e8eef6; --mut:#8597ad; --dim:#5d6f86;
-  --accent:#ffb020;      /* signal amber — quebrado */
-  --ok:#34d399; --bad:#f0556a; --warn:#ffb020; --info:#5aa6ff;
-  --mono:'IBM Plex Mono',monospace; --sans:'IBM Plex Sans',system-ui,sans-serif;
-  --disp:'Bricolage Grotesque',var(--sans);
+  --primary-100:#CCDCEC; --primary-500:#004F9F; --primary-600:#002F5F; --primary-700:#002040;
+  --bg:#FFFFFF; --bg-muted:#F9F9F9; --bg-subtle:#EAEBEC;
+  --content-1:#212A31; --content-2:#6E757A; --content-3:#A9AEB1;
+  --border:#A9AEB1; --border-soft:#EAEBEC; --border-strong:#545D64;
+  --error:#DA1E28; --success:#198038; --warning:#FF6200; --info:#067BCC; --link:#0D99F7;
+  --ff-head:"Open Sans",system-ui,sans-serif;
+  --ff-body:"Roboto",system-ui,sans-serif;
+  --ff-mono:"Archivo","Roboto Mono",monospace;
+  --sh-4:0px 4px 8px 0px rgba(0,32,64,.30);
+  --sh-6:0px 6px 12px 0px rgba(0,32,64,.30);
+  --r-input:2px; --r-btn:4px; --r-card:8px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0; background:var(--bg); color:var(--txt); font-family:var(--sans);
-  font-size:14px; line-height:1.5;
-  background-image:
-    radial-gradient(900px 500px at 85% -10%, #15243a55, transparent 70%),
-    linear-gradient(transparent 95%, #ffffff06 95%),
-    linear-gradient(90deg, transparent 95%, #ffffff06 95%);
-  background-size:auto, 26px 26px, 26px 26px;
-}
-.wrap{max-width:1280px; margin:0 auto; padding:34px 24px 80px}
+html,body{margin:0; background:var(--bg-muted); color:var(--content-1); font-family:var(--ff-body); font-size:16px; line-height:1.5}
+h1,h2,h3{font-family:var(--ff-head); font-weight:700; margin:0}
+a{color:var(--link)}
+:focus-visible{outline:2px solid var(--link); outline-offset:2px}
 
-/* header */
-.head{display:flex; align-items:flex-end; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:28px}
-.brand{display:flex; flex-direction:column; gap:6px}
-.kicker{font-family:var(--mono); font-size:11px; letter-spacing:.28em; text-transform:uppercase; color:var(--accent)}
-h1{font-family:var(--disp); font-weight:800; font-size:40px; line-height:1; margin:0; letter-spacing:-.02em}
-h1 .x{color:var(--accent)}
-.sub{color:var(--mut); max-width:62ch}
-.meta{font-family:var(--mono); font-size:11px; color:var(--dim); text-align:right; line-height:1.8}
-.meta b{color:var(--mut); font-weight:500}
+/* header strip governamental */
+.ds-strip{background:var(--primary-500); color:#fff; min-height:96px; display:flex; align-items:center}
+.ds-strip .in{max-width:1200px; margin:0 auto; padding:18px 24px; width:100%; display:flex; align-items:center; gap:16px}
+.ds-strip .mark{font-family:var(--ff-mono); font-weight:700; font-size:12px; letter-spacing:.08em; background:#ffffff1f; padding:6px 10px; border-radius:var(--r-btn)}
+.ds-strip h1{font-size:22px; line-height:1.2}
+.ds-strip .sub{font-family:var(--ff-body); font-weight:400; font-size:13px; opacity:.9; margin-top:2px}
 
-/* kpis */
-.kpis{display:grid; grid-template-columns:repeat(6,1fr); gap:12px; margin-bottom:26px}
-.kpi{background:linear-gradient(180deg,var(--panel),var(--bg2)); border:1px solid var(--line2);
-  border-radius:14px; padding:16px 16px 14px; position:relative; overflow:hidden}
-.kpi::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--dim)}
-.kpi.k-bad::before{background:var(--bad)} .kpi.k-amber::before{background:var(--accent)}
-.kpi.k-ok::before{background:var(--ok)} .kpi.k-info::before{background:var(--info)}
-.kpi .v{font-family:var(--disp); font-weight:700; font-size:30px; line-height:1; letter-spacing:-.02em}
-.kpi .l{font-family:var(--mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--mut); margin-top:8px}
-@media(max-width:880px){.kpis{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)} h1{font-size:30px}}
+.wrap{max-width:1200px; margin:0 auto; padding:28px 24px 80px}
+
+/* breadcrumb-ish meta */
+.meta{display:flex; gap:18px; flex-wrap:wrap; font-family:var(--ff-mono); font-size:12px; color:var(--content-2); margin-bottom:22px}
+.meta b{color:var(--content-1); font-weight:600}
+
+/* KPIs */
+.kpis{display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:28px}
+.kpi{background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card);
+  box-shadow:var(--sh-4); padding:16px; position:relative; overflow:hidden}
+.kpi::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--content-3)}
+.kpi.k-primary::before{background:var(--primary-500)} .kpi.k-error::before{background:var(--error)}
+.kpi.k-success::before{background:var(--success)} .kpi.k-warning::before{background:var(--warning)}
+.kpi.k-info::before{background:var(--info)}
+.kpi .v{font-family:var(--ff-head); font-weight:700; font-size:32px; line-height:1; color:var(--content-1)}
+.kpi .l{font-size:13px; color:var(--content-2); margin-top:8px}
+@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:540px){.kpis{grid-template-columns:repeat(2,1fr)}}
 
 /* controls */
-.bar{display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px}
-.field{display:flex; align-items:center; gap:8px; background:var(--panel); border:1px solid var(--line2);
-  border-radius:10px; padding:0 12px; height:42px}
-.field label{font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--dim)}
-.field select, .field input{background:transparent; border:0; color:var(--txt); font-family:var(--sans);
-  font-size:13.5px; outline:none; height:40px; min-width:120px}
-.field input{min-width:200px}
-.field.search{flex:1; min-width:220px}
-select option{background:var(--panel2); color:var(--txt)}
-.toggle{display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; color:var(--mut);
-  font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase}
-.toggle input{accent-color:var(--accent)}
-.btn{background:var(--panel); border:1px solid var(--line2); color:var(--mut); border-radius:10px;
-  height:42px; padding:0 14px; cursor:pointer; font-family:var(--mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase}
-.btn:hover{border-color:var(--accent); color:var(--txt)}
+.bar{display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:20px}
+.field{display:flex; flex-direction:column; gap:4px}
+.field label{font-family:var(--ff-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:var(--content-2)}
+.field select,.field input{height:48px; border:1px solid var(--border); border-radius:var(--r-input);
+  background:var(--bg); color:var(--content-1); font-family:var(--ff-body); font-size:14px; padding:0 12px; min-width:150px}
+.field.search{flex:1; min-width:240px}
+.field.search input{width:100%}
+.field select:focus,.field input:focus{border-color:var(--primary-500); box-shadow:0 0 0 2px rgba(0,79,159,.15); outline:none}
+.toggles{display:flex; gap:16px; align-items:center; padding-top:18px}
+.toggle{display:flex; align-items:center; gap:8px; font-size:14px; color:var(--content-1); cursor:pointer; user-select:none}
+.toggle input{width:20px; height:20px; accent-color:var(--primary-500)}
+.btn-sec{height:48px; align-self:flex-end; margin-top:auto; padding:0 16px; border:1px solid var(--border);
+  background:var(--bg); color:var(--content-1); border-radius:var(--r-btn); font-family:var(--ff-body); font-weight:600; font-size:14px; cursor:pointer}
+.btn-sec:hover{border-color:var(--primary-500); color:var(--primary-500)}
 
-/* group + table */
-.group{margin-top:22px}
-.ghead{display:flex; align-items:center; gap:12px; padding:0 4px 10px; border-bottom:1px solid var(--line2)}
-.ghead .org{font-family:var(--disp); font-weight:700; font-size:18px; letter-spacing:-.01em}
-.ghead .cnt{font-family:var(--mono); font-size:11px; color:var(--bg); background:var(--accent);
-  padding:2px 9px; border-radius:20px; font-weight:600}
-.ghead .prog{margin-left:auto; font-family:var(--mono); font-size:11px; color:var(--dim)}
-.rows{margin-top:4px; display:flex; flex-direction:column}
-.row{display:grid; grid-template-columns:30px 1fr 1.3fr 130px 132px 120px; gap:12px; align-items:center;
-  padding:13px 8px; border-bottom:1px solid var(--line); transition:background .12s}
-.row:hover{background:#ffffff05}
-.row.done{opacity:.4}
-.row.done .nm{text-decoration:line-through}
+/* groups + table */
+.group{margin-top:24px; background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card); overflow:hidden; box-shadow:var(--sh-4)}
+.ghead{display:flex; align-items:center; gap:12px; padding:14px 18px; background:var(--bg-muted); border-bottom:1px solid var(--border-soft)}
+.ghead .org{font-family:var(--ff-head); font-weight:700; font-size:18px; color:var(--content-1)}
+.ghead .cnt{font-family:var(--ff-body); font-weight:700; font-size:12px; color:var(--primary-600); background:var(--primary-100); padding:3px 10px; border-radius:var(--r-btn)}
+.ghead .prog{margin-left:auto; font-family:var(--ff-mono); font-size:12px; color:var(--content-2)}
+.thead,.row{display:grid; grid-template-columns:30px 1.2fr 1.3fr 130px 120px 116px; gap:12px; align-items:center}
+.thead{padding:10px 18px; background:var(--primary-500); color:#fff; font-family:var(--ff-body); font-weight:600; font-size:12px; letter-spacing:.02em}
+.row{padding:12px 18px; border-bottom:1px solid var(--border-soft)}
+.row:last-child{border-bottom:0}
+.row:hover{background:var(--bg-muted)}
+.row.done{background:#f4faf6}
+.row.done .nm b{text-decoration:line-through; color:var(--content-2)}
 .chk{display:flex; justify-content:center}
-.chk input{width:17px; height:17px; accent-color:var(--ok); cursor:pointer}
-.nm{font-weight:600}
-.nm .slug{display:block; font-family:var(--mono); font-size:11px; color:var(--dim); font-weight:400; margin-top:2px}
-.addr{color:var(--mut); font-size:13px}
-.addr .bairro{color:var(--dim); font-size:12px}
-.badge{font-family:var(--mono); font-size:10.5px; letter-spacing:.04em; padding:4px 9px; border-radius:6px;
-  white-space:nowrap; display:inline-block; border:1px solid transparent}
-.b-aspa{background:#ffb02018; color:var(--warn); border-color:#ffb02033}
-.b-iframe{background:#5aa6ff18; color:var(--info); border-color:#5aa6ff33}
-.b-nao-embed{background:#f0556a18; color:var(--bad); border-color:#f0556a33}
-.b-sem-source{background:#f0556a18; color:var(--bad); border-color:#f0556a33}
-.a-edit{display:inline-flex; align-items:center; gap:6px; background:var(--accent); color:#1a1206;
-  text-decoration:none; font-weight:600; font-size:12.5px; padding:7px 12px; border-radius:8px; white-space:nowrap}
-.a-edit:hover{filter:brightness(1.08)}
-.cp{background:transparent; border:1px solid var(--line2); color:var(--mut); border-radius:8px;
-  padding:7px 10px; cursor:pointer; font-family:var(--mono); font-size:11px; white-space:nowrap}
-.cp:hover{border-color:var(--ok); color:var(--ok)}
-.cp.done{border-color:var(--ok); color:var(--ok)}
-.flag{font-family:var(--mono); font-size:11px; color:var(--bad)}
-.empty{padding:60px 20px; text-align:center; color:var(--dim); font-family:var(--mono)}
-.foot{margin-top:40px; padding-top:16px; border-top:1px solid var(--line); color:var(--dim);
-  font-family:var(--mono); font-size:11px; line-height:1.9}
+.chk input{width:20px; height:20px; accent-color:var(--success); cursor:pointer}
+.nm b{font-weight:600; color:var(--content-1)}
+.nm .slug{display:block; font-family:var(--ff-mono); font-size:12px; color:var(--content-3); margin-top:2px}
+.addr{font-size:14px; color:var(--content-2)}
+.addr .bairro{color:var(--content-3); font-size:13px}
+/* DS tags */
+.tag{display:inline-flex; align-items:center; height:24px; padding:0 8px; border-radius:var(--r-btn);
+  font-family:var(--ff-body); font-weight:700; font-size:12px; white-space:nowrap}
+.t-aspa{background:#FFE0CC; color:#331A09}
+.t-iframe{background:#CDEBFF; color:#011F33}
+.t-nao-embed{background:#F6D3D5; color:#540F12}
+.t-sem-source{background:#F6D3D5; color:#540F12}
+.a-edit{display:inline-flex; align-items:center; gap:6px; height:40px; padding:0 14px; background:var(--primary-500);
+  color:#fff; text-decoration:none; font-weight:700; font-size:13px; border-radius:var(--r-btn); border:2px solid var(--primary-500)}
+.a-edit:hover{background:var(--primary-600); border-color:var(--primary-600)}
+.a-edit:active{background:var(--primary-700)}
+.cp{height:40px; padding:0 12px; background:var(--bg); border:1px solid var(--border); color:var(--content-1);
+  border-radius:var(--r-btn); font-family:var(--ff-body); font-weight:600; font-size:13px; cursor:pointer; white-space:nowrap}
+.cp:hover{border-color:var(--primary-500); color:var(--primary-500)}
+.cp.done{border-color:var(--success); color:var(--success)}
+.flag{font-family:var(--ff-mono); font-size:12px; color:var(--error)}
+.empty{padding:48px 20px; text-align:center; color:var(--content-2); font-family:var(--ff-mono); background:var(--bg); border:1px solid var(--border-soft); border-radius:var(--r-card)}
+.foot{margin-top:32px; padding-top:16px; border-top:1px solid var(--border-soft); color:var(--content-2); font-size:13px; line-height:1.9}
+code{font-family:var(--ff-mono); background:var(--bg-subtle); padding:1px 5px; border-radius:var(--r-input); font-size:.9em}
 @media(max-width:820px){
-  .row{grid-template-columns:26px 1fr 110px; row-gap:8px}
-  .addr,.row .acts-edit,.row .acts-cp{grid-column:2 / -1}
-  .row .acts{display:flex; gap:8px}
+  .thead{display:none}
+  .row{grid-template-columns:24px 1fr 108px; row-gap:10px}
+  .addr,.acts-edit,.acts-cp{grid-column:2 / -1}
+  .acts-edit,.acts-cp{display:inline-block}
 }
 </style>
 </head>
 <body>
+
+<header class="ds-strip">
+  <div class="in">
+    <span class="mark">SETDIG</span>
+    <div>
+      <h1>Source do Mapa incorreto</h1>
+      <div class="sub">Secretaria-Executiva de Transformação Digital · Portal ms.gov.br</div>
+    </div>
+  </div>
+</header>
+
 <div class="wrap">
 
-  <header class="head">
-    <div class="brand">
-      <span class="kicker">SETDIG · Portal ms.gov.br</span>
-      <h1>Mapa <span class="x">Quebrado</span></h1>
-      <p class="sub">Unidades de atendimento <b>ativas</b> com <i>Source do Mapa</i> incorreto — campo iniciando com aspa, contendo a tag <code>&lt;iframe&gt;</code>, ou URL que não renderiza em iframe. Clique <b>Editar</b> e corrija direto no admin.</p>
-    </div>
-    <div class="meta">
-      <div>fonte · <b>API CMS (read-only)</b></div>
-      <div>gerado · <b>{{GENERATED_AT}}</b></div>
-      <div>varredura · <b>{{N_SERVICOS}} serviços / {{N_UNIDADES}} unidades</b></div>
-    </div>
-  </header>
+  <div class="meta">
+    <span>fonte · <b>API CMS (somente leitura)</b></span>
+    <span>gerado · <b>{{GENERATED_AT}}</b></span>
+    <span>varredura · <b>{{N_SERVICOS}} serviços / {{N_UNIDADES}} unidades</b></span>
+  </div>
 
   <section class="kpis" id="kpis"></section>
 
   <div class="bar">
-    <div class="field"><label>Órgão</label><select id="f-org"></select></div>
-    <div class="field"><label>Motivo</label>
+    <div class="field"><label for="f-org">Órgão</label><select id="f-org"></select></div>
+    <div class="field"><label for="f-mot">Motivo</label>
       <select id="f-mot">
         <option value="">Todos</option>
         <option value="aspa-inicial">Aspa inicial</option>
@@ -140,39 +149,41 @@ select option{background:var(--panel2); color:var(--txt)}
         <option value="sem-source">Sem source</option>
       </select>
     </div>
-    <div class="field search"><label>Busca</label><input id="f-q" type="search" placeholder="nome, slug, endereço, bairro…"></div>
-    <label class="toggle"><input type="checkbox" id="t-group" checked> Agrupar por órgão</label>
-    <label class="toggle"><input type="checkbox" id="t-hide"> Ocultar concluídas</label>
-    <button class="btn" id="reset">Limpar progresso</button>
+    <div class="field search"><label for="f-q">Busca</label><input id="f-q" type="search" placeholder="nome, slug, endereço, bairro…"></div>
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" id="t-group" checked> Agrupar por órgão</label>
+      <label class="toggle"><input type="checkbox" id="t-hide"> Ocultar concluídas</label>
+    </div>
+    <button class="btn-sec" id="reset" type="button">Limpar progresso</button>
   </div>
 
   <main id="list"></main>
 
   <footer class="foot">
-    <div>Critério: <b>aspa inicial</b> (iframe.src vira <code>"http…</code> → 404) · <b>tag &lt;iframe&gt;</b> no campo · <b>não-embed</b> (place/dir/short → bloqueado em iframe). Progresso salvo localmente (localStorage).</div>
-    <div>Correção mínima: remover a aspa inicial / extrair só a URL <code>…/maps/embed?pb=…</code>. Casos <span class="flag">__GERAR_EMBED__</span> precisam de embed novo.</div>
+    <div>Critério: <b>aspa inicial</b> (o campo vira <code>"http…</code> → 404) · <b>tag &lt;iframe&gt;</b> colada no campo · <b>não-embed</b> (place/dir/short → bloqueado em iframe). Embed válido começa em <code>https://www.google.com/maps/embed?pb=…</code></div>
+    <div>Correção mínima: remover a aspa inicial / extrair só a URL. Casos <span class="flag">embed novo</span> precisam de um embed gerado no Google Maps. Progresso salvo localmente neste navegador.</div>
   </footer>
 
 </div>
 
+<script id="ds-data" type="application/json">{{DATA_JSON}}</script>
 <script>
-const DATA = {{DATA_JSON}};
+const DATA = JSON.parse(document.getElementById('ds-data').textContent);
 const KEY = 'mapa_quebrado_done';
 let done = {};
-try { done = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e){ done = {}; }
+try { done = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { done = {}; }
 
-const badgeClass = m => ({'aspa-inicial':'b-aspa','tag-iframe':'b-iframe','nao-embed':'b-nao-embed','sem-source':'b-sem-source'}[m]||'b-aspa');
-const badgeLabel = m => ({'aspa-inicial':'aspa inicial','tag-iframe':'<iframe>','nao-embed':'não-embed','sem-source':'sem source'}[m]||m);
-const esc = s => String(s==null?'':s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const tagClass = m => ({'aspa-inicial':'t-aspa','tag-iframe':'t-iframe','nao-embed':'t-nao-embed','sem-source':'t-sem-source'}[m] || 't-aspa');
+const tagLabel = m => ({'aspa-inicial':'aspa inicial','tag-iframe':'<iframe>','nao-embed':'não-embed','sem-source':'sem source'}[m] || m);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-// órgão filter options
-(function(){
+(function fillOrgaos(){
   const counts = {};
-  DATA.forEach(r => counts[r.orgao] = (counts[r.orgao]||0)+1);
-  const sel = document.getElementById('f-org');
-  sel.innerHTML = '<option value="">Todos os órgãos ('+DATA.length+')</option>' +
+  DATA.forEach(r => counts[r.orgao] = (counts[r.orgao] || 0) + 1);
+  document.getElementById('f-org').innerHTML =
+    '<option value="">Todos os órgãos (' + DATA.length + ')</option>' +
     Object.entries(counts).sort((a,b)=>b[1]-a[1])
-      .map(([o,n])=>`<option value="${esc(o)}">${esc(o)} (${n})</option>`).join('');
+      .map(([o,n]) => `<option value="${esc(o)}">${esc(o)} (${n})</option>`).join('');
 })();
 
 const els = {
@@ -183,82 +194,83 @@ const els = {
 };
 
 function filtered(){
-  const o=els.org.value, m=els.mot.value, q=els.q.value.trim().toLowerCase();
-  return DATA.filter(r=>{
-    if(o && r.orgao!==o) return false;
-    if(m && r.motivo!==m) return false;
-    if(els.hide.checked && done[r.slug]) return false;
-    if(q){ const hay=(r.slug+' '+r.nome+' '+r.endereco+' '+r.bairro+' '+r.orgao).toLowerCase(); if(!hay.includes(q)) return false; }
+  const o = els.org.value, m = els.mot.value, q = els.q.value.trim().toLowerCase();
+  return DATA.filter(r => {
+    if (o && r.orgao !== o) return false;
+    if (m && r.motivo !== m) return false;
+    if (els.hide.checked && done[r.slug]) return false;
+    if (q){ const hay = (r.slug+' '+r.nome+' '+r.endereco+' '+r.bairro+' '+r.orgao).toLowerCase(); if (!hay.includes(q)) return false; }
     return true;
   });
 }
 
 function rowHTML(r){
   const d = done[r.slug] ? ' done' : '';
-  const gen = r.source_corrigido==='__GERAR_EMBED__';
-  const act = gen
-    ? `<span class="flag">embed novo</span>`
-    : `<button class="cp" data-src="${esc(r.source_corrigido)}">copiar fix</button>`;
+  const gen = r.source_corrigido === '__GERAR_EMBED__';
+  const act = gen ? '<span class="flag">embed novo</span>'
+                  : `<button class="cp" data-src="${esc(r.source_corrigido)}">Copiar fix</button>`;
   return `<div class="row${d}" data-slug="${esc(r.slug)}">
-    <div class="chk"><input type="checkbox" ${done[r.slug]?'checked':''} data-slug="${esc(r.slug)}"></div>
-    <div class="nm">${esc(r.nome)}<span class="slug">${esc(r.slug)}</span></div>
+    <div class="chk"><input type="checkbox" ${done[r.slug] ? 'checked' : ''} data-slug="${esc(r.slug)}" aria-label="marcar concluída"></div>
+    <div class="nm"><b>${esc(r.nome)}</b><span class="slug">${esc(r.slug)}</span></div>
     <div class="addr">${esc(r.endereco)}<span class="bairro"> · ${esc(r.bairro)}</span></div>
-    <div><span class="badge ${badgeClass(r.motivo)}">${esc(badgeLabel(r.motivo))}</span></div>
+    <div><span class="tag ${tagClass(r.motivo)}">${tagLabel(r.motivo)}</span></div>
     <div class="acts-edit"><a class="a-edit" href="${esc(r.edit_url)}" target="_blank" rel="noopener">Editar ↗</a></div>
     <div class="acts-cp">${act}</div>
   </div>`;
 }
 
+const THEAD = `<div class="thead"><div></div><div>Unidade</div><div>Endereço</div><div>Motivo</div><div>Admin</div><div>Fix</div></div>`;
+
 function render(){
   const rows = filtered();
-  // KPIs
   const total = DATA.length;
-  const doneCount = DATA.filter(r=>done[r.slug]).length;
-  const orgs = new Set(DATA.map(r=>r.orgao)).size;
-  const aspa = DATA.filter(r=>r.motivo==='aspa-inicial').length;
-  const novo = DATA.filter(r=>r.source_corrigido==='__GERAR_EMBED__').length;
+  const doneCount = DATA.filter(r => done[r.slug]).length;
+  const orgs = new Set(DATA.map(r => r.orgao)).size;
+  const aspa = DATA.filter(r => r.motivo === 'aspa-inicial').length;
+  const novo = DATA.filter(r => r.source_corrigido === '__GERAR_EMBED__').length;
   els.kpis.innerHTML = [
-    ['k-amber', total, 'Incorretas'],
-    ['k-bad', total-doneCount, 'Pendentes'],
-    ['k-ok', doneCount, 'Concluídas'],
-    ['', aspa, 'Aspa inicial'],
+    ['k-primary', total, 'Incorretas'],
+    ['k-error', total - doneCount, 'Pendentes'],
+    ['k-success', doneCount, 'Concluídas'],
+    ['k-warning', aspa, 'Aspa inicial'],
     ['k-info', novo, 'Embed novo'],
     ['', orgs, 'Órgãos'],
-  ].map(([c,v,l])=>`<div class="kpi ${c}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
+  ].map(([c,v,l]) => `<div class="kpi ${c}"><div class="v">${v}</div><div class="l">${l}</div></div>`).join('');
 
-  if(!rows.length){ els.list.innerHTML = '<div class="empty">Nenhuma unidade com os filtros atuais.</div>'; bind(); return; }
+  if (!rows.length){ els.list.innerHTML = '<div class="empty">Nenhuma unidade com os filtros atuais.</div>'; return; }
 
-  if(els.group.checked){
+  if (els.group.checked){
     const groups = {};
-    rows.forEach(r=>{ (groups[r.orgao]=groups[r.orgao]||[]).push(r); });
+    rows.forEach(r => (groups[r.orgao] = groups[r.orgao] || []).push(r));
     els.list.innerHTML = Object.entries(groups).sort((a,b)=>b[1].length-a[1].length).map(([org,rs])=>{
-      const dn = rs.filter(r=>done[r.slug]).length;
+      const dn = rs.filter(r => done[r.slug]).length;
       return `<section class="group"><div class="ghead">
         <span class="org">${esc(org)}</span><span class="cnt">${rs.length}</span>
-        <span class="prog">${dn}/${rs.length} feitas</span></div>
-        <div class="rows">${rs.map(rowHTML).join('')}</div></section>`;
+        <span class="prog">${dn}/${rs.length} concluídas</span></div>
+        ${THEAD}${rs.map(rowHTML).join('')}</section>`;
     }).join('');
   } else {
-    els.list.innerHTML = `<section class="group"><div class="rows">${rows.map(rowHTML).join('')}</div></section>`;
+    els.list.innerHTML = `<section class="group">${THEAD}${rows.map(rowHTML).join('')}</section>`;
   }
   bind();
 }
 
 function bind(){
-  els.list.querySelectorAll('input[type=checkbox]').forEach(cb=>cb.addEventListener('change',e=>{
-    const s=e.target.dataset.slug; if(e.target.checked) done[s]=1; else delete done[s];
+  els.list.querySelectorAll('input[type=checkbox]').forEach(cb => cb.addEventListener('change', e => {
+    const s = e.target.dataset.slug;
+    if (e.target.checked) done[s] = 1; else delete done[s];
     localStorage.setItem(KEY, JSON.stringify(done)); render();
   }));
-  els.list.querySelectorAll('.cp[data-src]').forEach(b=>b.addEventListener('click',()=>{
+  els.list.querySelectorAll('.cp[data-src]').forEach(b => b.addEventListener('click', () => {
     navigator.clipboard.writeText(b.dataset.src);
-    const t=b.textContent; b.textContent='copiado!'; b.classList.add('done');
-    setTimeout(()=>{b.textContent=t; b.classList.remove('done');},1100);
+    const t = b.textContent; b.textContent = 'Copiado!'; b.classList.add('done');
+    setTimeout(() => { b.textContent = t; b.classList.remove('done'); }, 1100);
   }));
 }
 
-[els.org,els.mot,els.group,els.hide].forEach(el=>el.addEventListener('change',render));
-els.q.addEventListener('input',render);
-els.reset.addEventListener('click',()=>{ if(confirm('Limpar todo o progresso?')){ done={}; localStorage.removeItem(KEY); render(); }});
+[els.org, els.mot, els.group, els.hide].forEach(el => el.addEventListener('change', render));
+els.q.addEventListener('input', render);
+els.reset.addEventListener('click', () => { if (confirm('Limpar todo o progresso?')){ done = {}; localStorage.removeItem(KEY); render(); }});
 render();
 </script>
 </body>
