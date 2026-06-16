@@ -213,7 +213,7 @@ function rowHTML(r){
     <div class="chk"><input type="checkbox" ${done[r.slug] ? 'checked' : ''} data-slug="${esc(r.slug)}" aria-label="marcar concluída"></div>
     <div class="nm"><b>${esc(r.nome)}</b><span class="slug">${esc(r.slug)}</span></div>
     <div class="addr">${esc(r.endereco)}<span class="bairro"> · ${esc(r.bairro)}</span></div>
-    <div><span class="tag ${tagClass(r.motivo)}">${tagLabel(r.motivo)}</span></div>
+    <div><span class="tag ${tagClass(r.motivo)}">${esc(tagLabel(r.motivo))}</span></div>
     <div class="acts-edit"><a class="a-edit" href="${esc(r.edit_url)}" target="_blank" rel="noopener">Editar ↗</a></div>
     <div class="acts-cp">${act}</div>
   </div>`;
